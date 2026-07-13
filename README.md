@@ -16,6 +16,7 @@ This skill uses Codex App background tasks instead. The lead agent plans, assign
 - Assigns explicit models and reasoning effort to background workers, with Sol and Luna as the default routes and Ultra disabled.
 - Limits fan-out to three new workers per wave, six concurrent workers, and eight workers per root task.
 - Verifies that each task materialized before continuing, prevents workers from spawning descendants, and archives only completed tasks whose results were adopted.
+- Acts as a Thread Orchestrator for upstream workflows such as Deep Research while preserving their stages, artifacts, and quality gates.
 - Keeps publishing, payments, deletion, account changes, and production mutations in the lead task.
 
 ## Requirements
@@ -56,6 +57,10 @@ The skill can also activate implicitly when the user's Codex instructions contai
 4. The lead agent verifies facts and outputs, handles conflicts, and integrates the final deliverable.
 5. Adopted idle or completed tasks are archived one at a time.
 
+When an upstream skill already owns task decomposition, this skill accepts its scale and stage order. It controls models, Thread lifecycle, and safety caps without rewriting the workflow. Any task with a workspace output path is project-bound even when the research topic is general.
+
+The default Deep Research budget is `2-4 researchers + 1 verifier + 1 reviewer + 2 retry slots`, preserving the cumulative eight-task cap for citation verification, adversarial review, and recovery.
+
 The full policy lives in [SKILL.md](SKILL.md). Supporting rules are in [references](references/).
 
 ## Repository layout
@@ -71,6 +76,7 @@ The full policy lives in [SKILL.md](SKILL.md). Supporting rules are in [referenc
     ├── routing-policy.md
     ├── task-packet.md
     ├── thread-lifecycle.md
+    ├── upstream-skill-adapter.md
     └── validation-cases.md
 ```
 

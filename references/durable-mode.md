@@ -6,7 +6,9 @@
 
 ## 状态目录
 
-在项目根目录创建：
+先检查上游 Skill 是否已经提供可恢复的 plan、task ledger 或 run summary。存在上游账本时直接复用，并在其中增加 Thread id、model、thinking、尝试次数、采纳和归档字段；禁止再创建第二套状态事实源。
+
+只有没有上游状态系统时，才在项目根目录创建：
 
 ```text
 agent_team/
