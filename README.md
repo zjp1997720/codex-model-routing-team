@@ -2,87 +2,129 @@
 
 [中文说明](README.zh-CN.md)
 
-Route complex Codex work to background workers with explicit models and reasoning effort, while keeping one lead agent in control.
+Give Codex a bounded team of background tasks, each with an explicit model and reasoning level, while one lead agent keeps control of planning, integration, and verification.
+
+## Install
+
+The standard `skills` CLI shorthand is valid:
+
+```bash
+npx skills add zjp1997720/codex-model-routing-team
+```
+
+For a global Codex installation without symlinks:
+
+```bash
+npx skills add zjp1997720/codex-model-routing-team \
+  -g -a codex --skill codex-model-routing-team --copy -y
+```
+
+The full GitHub URL works too:
+
+```bash
+npx skills add https://github.com/zjp1997720/codex-model-routing-team
+```
+
+Verify that the installed package contains both the entrypoint and its supporting policies:
+
+```bash
+npx skills ls -g -a codex
+find ~/.agents/skills/codex-model-routing-team -maxdepth 2 -type f | sort
+```
+
+The file list must include `SKILL.md`, `references/routing-policy.md`, `references/task-packet.md`, and `references/thread-lifecycle.md`. If only `SKILL.md` appears, remove that incomplete installation and install the current release again.
+
+## Activate it
+
+Explicit activation works immediately after installation:
+
+```text
+Use $codex-model-routing-team to research these six independent topics in parallel, then verify and synthesize the findings.
+```
+
+To let Codex activate the Skill automatically for suitable complex work, add the following standing authorization to `~/.codex/AGENTS.md`. Put it in a project-level `AGENTS.md` instead when the authorization should apply only to that project.
+
+```markdown
+## Codex background model-routing authorization
+
+- The user authorizes Codex to use `$codex-model-routing-team` automatically for complex, parallelizable tasks, create independent background tasks, and assign a model and reasoning level to each task. Before dispatch, briefly state the number of tasks, model, reasoning level, and responsibility. No additional confirmation is required.
+- The lead agent keeps its current model and owns planning, file ownership, integration, verification, and final delivery.
+- Run at most 6 background tasks concurrently and create at most 8 for one root task. Background tasks must not create more background tasks or subagents.
+- Background tasks must not use Ultra. Terra is excluded from automatic routing by default. If Codex App background-task tools are unavailable, complete the work locally and do not use MultiAgentV2 `spawn_agent` as a substitute for model routing.
+- Do not auto-dispatch simple questions, status checks, small single-file edits, strongly sequential work, publishing, sending, payment, deletion, account, or production operations.
+```
+
+This is user-configured Codex instruction, not a hidden OpenAI system prompt. Explicit `$codex-model-routing-team` requests remain available without the standing authorization.
 
 ## Why this exists
 
 Codex's native MultiAgentV2 surface does not expose per-worker model or reasoning controls. Native subagents therefore inherit the session model, which can make parallel work unexpectedly expensive.
 
-This skill uses Codex App background tasks instead. The lead agent plans, assigns file ownership, integrates results, runs verification, and decides what to keep. Background workers can use different available models and reasoning levels for the work they are best suited to handle.
+This Skill uses Codex App background tasks instead. The lead agent plans the work, assigns non-overlapping ownership, verifies results, and integrates the final deliverable. Each background task receives an explicit available model and reasoning level.
 
 ## What it does
 
 - Routes only complex, genuinely parallel work such as multi-source research, multi-section content, large Skills or decks, and independent engineering workstreams.
-- Assigns explicit models and reasoning effort to background workers, with Sol and Luna as the default routes and Ultra disabled.
-- Limits fan-out to three new workers per wave, six concurrent workers, and eight workers per root task.
-- Verifies that each task materialized before continuing, prevents workers from spawning descendants, and archives only completed tasks whose results were adopted.
+- Uses Sol and Luna as the default routes, prohibits Ultra, and keeps Terra out of automatic routing unless evidence or the user calls for it.
+- Limits fan-out to three new tasks per wave, six concurrent tasks, and eight total tasks per root request.
+- Treats the first real task as a health probe, verifies every created task, prevents descendants, and archives only completed tasks whose results were adopted.
 - Acts as a Thread Orchestrator for upstream workflows such as Deep Research while preserving their stages, artifacts, and quality gates.
 - Keeps publishing, payments, deletion, account changes, and production mutations in the lead task.
 
-## Requirements
+## How it works
 
-- Codex App with background task tools for project discovery, task creation, task reading, follow-up messages, and archiving.
-- Access to the models and reasoning levels selected by the lead agent.
-- A healthy Codex tool environment. The skill stops delegation when background task creation cannot be verified.
+1. The lead agent decides whether parallel execution is worth the coordination cost.
+2. It creates one real background task as a health probe and confirms that the task can be read.
+3. It creates later tasks in bounded waves with explicit model, reasoning, scope, file ownership, and acceptance criteria.
+4. It verifies facts and artifacts, resolves conflicts, and integrates the result.
+5. It archives adopted completed tasks one at a time.
 
-## Install
+When an upstream Skill already owns decomposition, this Skill accepts its stages and task budget. It controls model routing, task lifecycle, and safety caps without rewriting the upstream workflow. Any task with a workspace output path is project-bound; only chat-only work may be projectless.
 
-```bash
-npx skills add zjp1997720/codex-model-routing-team -g -a codex --skill codex-model-routing-team -y
-```
+The default Deep Research budget is `2-4 researchers + 1 verifier + 1 reviewer + 2 retry slots`, within the cumulative eight-task cap.
 
-## Use
-
-Ask Codex directly:
-
-```text
-Use $codex-model-routing-team to research these six independent topics in parallel, then verify and synthesize the findings.
-```
+## Example requests
 
 ```text
 Use $codex-model-routing-team to implement, test, and review three independent modules without overlapping file ownership.
 ```
 
 ```text
-Use $codex-model-routing-team to prepare a training deck with separate research, writing, and review workers.
+Use $codex-model-routing-team to prepare a training deck with separate research, writing, and review tasks.
 ```
 
-The skill can also activate implicitly when the user's Codex instructions contain standing authorization for background model routing.
+```text
+Use $codex-model-routing-team as the Thread Orchestrator for $deep-research. Preserve its verifier and reviewer stages.
+```
 
-## Routing behavior
+## Requirements and boundaries
 
-1. The lead agent decides whether parallelism will beat coordination cost.
-2. The first real worker acts as a health probe and must be readable before more tasks are created.
-3. Later workers are created in bounded waves with explicit model, reasoning, scope, ownership, and acceptance criteria.
-4. The lead agent verifies facts and outputs, handles conflicts, and integrates the final deliverable.
-5. Adopted idle or completed tasks are archived one at a time.
-
-When an upstream skill already owns task decomposition, this skill accepts its scale and stage order. It controls models, Thread lifecycle, and safety caps without rewriting the workflow. Any task with a workspace output path is project-bound even when the research topic is general.
-
-The default Deep Research budget is `2-4 researchers + 1 verifier + 1 reviewer + 2 retry slots`, preserving the cumulative eight-task cap for citation verification, adversarial review, and recovery.
-
-The full policy lives in [SKILL.md](SKILL.md). Supporting rules are in [references](references/).
+- Codex App with background-task tools for project discovery, task creation, task reading, follow-up messages, and archiving.
+- Access to the models and reasoning levels selected by the lead agent.
+- Background task creation must be verifiable. The Skill stops delegation when a task does not materialize.
+- This does not change MultiAgentV2 or make native subagents support per-agent model selection.
 
 ## Repository layout
 
 ```text
 .
-├── SKILL.md
-├── agents/
-│   ├── interface.yaml
-│   └── openai.yaml
-└── references/
-    ├── durable-mode.md
-    ├── routing-policy.md
-    ├── task-packet.md
-    ├── thread-lifecycle.md
-    ├── upstream-skill-adapter.md
-    └── validation-cases.md
+├── README.md
+├── README.zh-CN.md
+├── LICENSE
+├── skills/
+│   └── codex-model-routing-team/
+│       ├── SKILL.md
+│       ├── agents/
+│       ├── evals/
+│       └── references/
+└── tests/
 ```
+
+The agent workflow lives in [SKILL.md](skills/codex-model-routing-team/SKILL.md). Supporting policies live in [references](skills/codex-model-routing-team/references/).
 
 ## Validation
 
-The workflow has been tested locally with both projectless research workers and project-bound workspace workers, including model/reasoning verification, result collection, and serial archival.
+The workflow has been tested with projectless research tasks and project-bound workspace tasks, including model/reasoning verification, result collection, failure handling, and serial archival. The release is also tested through an isolated `npx skills` installation to confirm that supporting files are copied.
 
 ## License
 
