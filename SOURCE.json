@@ -24,6 +24,6 @@
   "payload_digest": "01a3b5f8fe2e4b39b688706dcbc31bb73b23d93f3aa311d14745f132bf3309b5",
   "schema_version": "1.0.0",
   "skill": "codex-model-routing-team",
-  "source_commit": "26cba9e100b37a2efe0fa161bd394db46cee5328",
+  "source_commit": "e69c5daca7563c75fe5a44a6bf3445163f03b116",
   "version": "1.0.0"
 }
