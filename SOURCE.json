@@ -1,0 +1,29 @@
+{
+  "canonical_repository": "zjp1997720/zhijian-skills",
+  "export_digest": "ec72b6c09f215184f93aa8d2bfada359ce010f4a49cb43eaa39c6fdfd5c3f714",
+  "files": {
+    ".github/workflows/redirect-contributions.yml": "07df186b56b8ad5f799ea585601d1fbec345f5cb7b3626b0755a99c2fb802502",
+    "CHANGELOG.md": "0d1ae1e2febce1e130048a158d1be55e3529b87c91fa18a783227270835c1734",
+    "CONTRIBUTING.md": "c2e5f5ea8a62d4958cab579d670ff4a2614768ec4edfbbd04ef347bf71bdc402",
+    "LICENSE": "4c132f6df8bf3720921492fb26412abc98bf51eec6acbe89dbf95c8b09b8d340",
+    "README.md": "2132d5b4eae42126306269afd55ec71a7c1a002fde913c9fb6a44432f1a54714",
+    "README.zh-CN.md": "f2f310519466534eed9e06a2345e5ee98442aa334a66839f509bc51cf5c41356",
+    "skills/codex-model-routing-team/LICENSE": "f1e11f1e32f8c40d39a8302880c84e839f88960dafe6efa18e50a9ba8a4942f8",
+    "skills/codex-model-routing-team/SKILL.md": "693bd5eb60367892994fb64ebdc2c6b7dc22c382779356a5ebcc1f9c81e12fec",
+    "skills/codex-model-routing-team/agents/interface.yaml": "ea1a68b923a9a8ba418fefee93ce7326311490bf16573a3af7c09772927bfa66",
+    "skills/codex-model-routing-team/agents/openai.yaml": "f8053074bf4e8f4750a6e34e0bec1b43e85f7a41f425b6a5a42311c1d3d5e874",
+    "skills/codex-model-routing-team/evals/upstream-skill-integration.json": "927375a8d03573db0f9bb1511b10151a8cf5083ebbfdf606e03aa5777c18d9e6",
+    "skills/codex-model-routing-team/references/durable-mode.md": "93b76ee025cdae88e14c52861dbb480f066e4383bfa30d0124176e22965020d7",
+    "skills/codex-model-routing-team/references/routing-policy.md": "fb3dc8fba42461df5da35296398338c6088888c057350c3201c61ffb10ad824f",
+    "skills/codex-model-routing-team/references/task-packet.md": "d13db8e5cdab04ccae5d360ade1564e6d966a4845984dd51dfb6806027750652",
+    "skills/codex-model-routing-team/references/thread-lifecycle.md": "da9c668cdf3e98054f8b82f90205eee1f8a7df6267c6639257929138b5bc3714",
+    "skills/codex-model-routing-team/references/upstream-skill-adapter.md": "ed6afca6a5f19bf9b15cc5c3fa630ef3f30433d29a664b76a7c05ade3a9f202a",
+    "skills/codex-model-routing-team/references/validation-cases.md": "ee3186610bc92aef2b6d303469792ec11f4d17226e419cd3f805d9bf6c7ad981"
+  },
+  "generated": true,
+  "payload_digest": "01a3b5f8fe2e4b39b688706dcbc31bb73b23d93f3aa311d14745f132bf3309b5",
+  "schema_version": "1.0.0",
+  "skill": "codex-model-routing-team",
+  "source_commit": "33bbb003cb967ae75f9ef372438d2e6744ca278f",
+  "version": "1.0.0"
+}
